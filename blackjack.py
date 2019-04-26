@@ -1,6 +1,7 @@
 import os
 import random
 
+print("\nWELCOME TO BLACKJACK!\n")
 decks = input("Enter number of decks to use: ")
 
 # user chooses number of decks of cards to use
@@ -9,6 +10,8 @@ deck = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]*(int(decks)*4)
 # initialize scores
 wins = 0
 losses = 0
+tokens = 100
+bet = 0
 
 def deal(deck):
     hand = []
@@ -59,10 +62,10 @@ def clear():
     if os.name == 'posix':
         os.system('clear')
 
+
+
 def print_results(dealer_hand, player_hand):
     clear()
-
-    print("\n    WELCOME TO BLACKJACK!\n")
     print("-"*30+"\n")
     print("    \033[1;32;40mWINS:  \033[1;37;40m%s   \033[1;31;40mLOSSES:  \033[1;37;40m%s\n" % (wins, losses))
     print("-"*30+"\n")
@@ -72,6 +75,7 @@ def print_results(dealer_hand, player_hand):
 def blackjack(dealer_hand, player_hand):
     global wins
     global losses
+    global tokens
     if total(player_hand) == 21:
         print_results(dealer_hand, player_hand)
         print ("Congratulations! You got a Blackjack!\n")
@@ -87,6 +91,7 @@ def score(dealer_hand, player_hand):
         # score function now updates to global win/loss variables
         global wins
         global losses
+        global tokens
         if total(player_hand) == 21:
             print_results(dealer_hand, player_hand)
             print ("Congratulations! You got a Blackjack!\n")
@@ -111,13 +116,14 @@ def score(dealer_hand, player_hand):
             print_results(dealer_hand, player_hand)
             print ("Congratulations. Your score is higher than the dealer. You win\n")
             wins += 1
+            tokens+= bet
 
 def game():
     global wins
     global losses
+    global tokens
     choice = 0
     clear()
-    print("\n    WELCOME TO BLACKJACK!\n")
     print("-"*30+"\n")
     print("    \033[1;32;40mWINS:  \033[1;37;40m%s   \033[1;31;40mLOSSES:  \033[1;37;40m%s\n" % (wins, losses))
     print("-"*30+"\n")
@@ -125,6 +131,7 @@ def game():
     player_hand = deal(deck)
     print ("The dealer is showing a " + str(dealer_hand[0]))
     print ("You have a " + str(player_hand) + " for a total of " + str(total(player_hand)))
+    print("You have " + str(tokens) + " tokens")
     blackjack(dealer_hand, player_hand)
     quit=False
     while not quit:
@@ -151,5 +158,6 @@ def game():
             print("Bye!")
             quit=True
             exit()
+        else: choice = input("Do you want to [H]it, [S]tand, or [Q]uit: ").lower()
 if __name__ == "__main__":
    game()
