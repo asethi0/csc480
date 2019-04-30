@@ -16,6 +16,8 @@ losses = 0
 tokens = 100
 bet = 0
 
+def str_1(hand):
+    if(total() < 17
 
 def deal(deck):
     hand = []
