@@ -2,7 +2,9 @@ import os
 import random
 import pandas as pd
 
-past_games = pd.read_csv
+past_games = pd.read_csv("ens_a_data_1m.csv")
+data_top = past_games.head()
+print(data_top)
 
 print("\nWELCOME TO BLACKJACK!\n")
 decks = input("Enter number of decks to use: ")
@@ -17,7 +19,9 @@ tokens = 100
 bet = 0
 
 def str_1(hand):
-    if(total() < 17
+    if(total() < 17):
+        hit(hand)
+
 
 def deal(deck):
     hand = []
