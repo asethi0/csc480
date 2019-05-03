@@ -3,7 +3,8 @@ import random
 import pandas as pd
 
 past_games = pd.read_csv("ens_a_data_1m.csv")
-data_top = past_games.head()
+pd = past_games[['player_actual_points', 'player_aces', 'visible_dealer_points', 'player_action', 'game_result']].copy()
+data_top = pd.head()
 print(data_top)
 
 print("\nWELCOME TO BLACKJACK!\n")
