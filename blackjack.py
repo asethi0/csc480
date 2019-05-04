@@ -7,6 +7,7 @@ pd = past_games[['player_actual_points', 'player_aces', 'visible_dealer_points',
 data_top = pd.head()
 print(data_top)
 
+
 print("\nWELCOME TO BLACKJACK!\n")
 decks = input("Enter number of decks to use: ")
 
@@ -22,6 +23,16 @@ bet = 0
 def str_1(hand):
     if(total() < 17):
         hit(hand)
+
+def make_new_table():
+    for
+
+def get_chance(hand, card):
+
+
+
+def place_bet(hand, tokens):
+
 
 
 def deal(deck):
