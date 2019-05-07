@@ -3,7 +3,7 @@ import random
 import pandas as pd
 
 past_games = pd.read_csv("ens_a_data_1m.csv")
-pd = past_games[['player_actual_points', 'player_aces', 'visible_dealer_points', 'player_action', 'game_result']].copy()
+pd = past_games[['player_actual_points', 'visible_dealer_points', 'player_action', 'game_result']].copy()
 data_top = pd.head()
 print(data_top)
 
@@ -21,18 +21,17 @@ tokens = 100
 bet = 0
 
 def str_1(hand):
-    if(total() < 17):
+    if total() < 17:
         hit(hand)
 
-def make_new_table():
-    for
 
-def get_chance(hand, card):
+def place_bet():
+    bet = input("\nHow much would you like to bet: ")
+    bet = int(bet)
+    return bet
 
-
-
-def place_bet(hand, tokens):
-
+def set_tokens():
+    return 100
 
 
 def deal(deck):
@@ -105,6 +104,9 @@ def blackjack(dealer_hand, player_hand):
     global wins
     global losses
     global tokens
+    global bet
+
+
     if total(player_hand) == 21:
         print_results(dealer_hand, player_hand)
         print("Congratulations! You got a Blackjack!\n")
@@ -122,29 +124,36 @@ def score(dealer_hand, player_hand):
     global wins
     global losses
     global tokens
+    global bet
     if total(player_hand) == 21:
         print_results(dealer_hand, player_hand)
         print("Congratulations! You got a Blackjack!\n")
+        tokens += bet
         wins += 1
     elif total(dealer_hand) == 21:
         print_results(dealer_hand, player_hand)
         print("Sorry, you lose. The dealer got a blackjack.\n")
+        tokens -= bet
         losses += 1
     elif total(player_hand) > 21:
         print_results(dealer_hand, player_hand)
         print("Sorry. You busted. You lose.\n")
+        tokens -= bet
         losses += 1
     elif total(dealer_hand) > 21:
         print_results(dealer_hand, player_hand)
         print("Dealer busts. You win!\n")
+        tokens += bet
         wins += 1
     elif total(player_hand) < total(dealer_hand):
         print_results(dealer_hand, player_hand)
         print("Sorry. Your score isn't higher than the dealer. You lose.\n")
+        tokens -= bet
         losses += 1
     elif total(player_hand) > total(dealer_hand):
         print_results(dealer_hand, player_hand)
         print("Congratulations. Your score is higher than the dealer. You win\n")
+        tokens += bet
         wins += 1
         tokens += bet
 
@@ -153,7 +162,9 @@ def game():
     global wins
     global losses
     global tokens
-    choice = 0
+    global bet
+
+
     clear()
     print("-" * 30 + "\n")
     print("    \033[1;32;40mWINS:  \033[1;37;40m%s   \033[1;31;40mLOSSES:  \033[1;37;40m%s\n" % (wins, losses))
@@ -163,6 +174,7 @@ def game():
     print("The dealer is showing a " + str(dealer_hand[0]))
     print("You have a " + str(player_hand) + " for a total of " + str(total(player_hand)))
     print("You have " + str(tokens) + " tokens")
+
     blackjack(dealer_hand, player_hand)
     quit = False
     while not quit:
@@ -173,6 +185,7 @@ def game():
             print("Hand total: " + str(total(player_hand)))
             if total(player_hand) > 21:
                 print('You busted')
+                tokens -= bet
                 losses += 1
                 play_again()
         elif choice == 's':
@@ -182,6 +195,7 @@ def game():
                 if total(dealer_hand) > 21:
                     print('Dealer busts, you win!')
                     wins += 1
+                    tokens+=bet
                     play_again()
             score(dealer_hand, player_hand)
             play_again()
