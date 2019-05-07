@@ -164,7 +164,6 @@ def game():
     global tokens
     global bet
 
-
     clear()
     print("-" * 30 + "\n")
     print("    \033[1;32;40mWINS:  \033[1;37;40m%s   \033[1;31;40mLOSSES:  \033[1;37;40m%s\n" % (wins, losses))
@@ -174,7 +173,7 @@ def game():
     print("The dealer is showing a " + str(dealer_hand[0]))
     print("You have a " + str(player_hand) + " for a total of " + str(total(player_hand)))
     print("You have " + str(tokens) + " tokens")
-
+    bet = place_bet()
     blackjack(dealer_hand, player_hand)
     quit = False
     while not quit:
