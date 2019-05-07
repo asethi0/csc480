@@ -111,11 +111,13 @@ def blackjack(dealer_hand, player_hand):
         print_results(dealer_hand, player_hand)
         print("Congratulations! You got a Blackjack!\n")
         wins += 1
+        tokens+=bet
         play_again()
     elif total(dealer_hand) == 21:
         print_results(dealer_hand, player_hand)
         print("Sorry, you lose. The dealer got a blackjack.\n")
         losses += 1
+        tokens-=bet
         play_again()
 
 
