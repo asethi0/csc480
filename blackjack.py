@@ -2,12 +2,25 @@ import os
 import random
 import pandas as pd
 
+"""
+only uncomment if running for first time on machine
 past_games = pd.read_csv("ens_a_data_1m.csv")
-pd = past_games[['player_actual_points', 'visible_dealer_points', 'player_action', 'game_result']].copy()
-data_top = pd.head()
-print(data_top)
+df = past_games[['player_actual_points', 'visible_dealer_points', 'player_action', 'game_result']].copy()
+df.to_csv('new_table.csv', ',')
+df = pd.read_csv("new_table.csv")
+cols = ['player_action', 'player_action']
+df = df[cols]
+df.to_csv('final_table.csv',',', header='False')
+df = pd.read_csv("new_table.csv")
+
+df = df.groupby(["player_actual_points","visible_dealer_points", "game_result"]).size()
+"""
+df = pd.read_csv("final_table.csv")
 
 
+print(df.head())
+
+'''
 print("\nWELCOME TO BLACKJACK!\n")
 decks = input("Enter number of decks to use: ")
 
@@ -206,7 +219,7 @@ def game():
             exit()
         else:
             choice = input("Do you want to [H]it, [S]tand, or [Q]uit: ").lower()
-
+'''
 
 if __name__ == "__main__":
-    game()
+   '''game()'''
