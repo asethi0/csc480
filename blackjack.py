@@ -14,14 +14,33 @@ df.to_csv('final_table.csv',',', header='False')
 df = pd.read_csv("new_table.csv")
 
 df = df.groupby(["player_actual_points","visible_dealer_points", "game_result"]).size()
-"""
+
 df = pd.read_csv("final_table.csv")
 
 
 print(df.head())
+"""
+df = pd.read_csv("final_table.csv")
 
-'''
+
+def get_wins(actual_points, visible_points):
+    for index, row in df.iterrows():
+        if(row['player_actual_points'] == actual_points and row["visible_dealer_points"] == visible_points and row["game_result"] == "W"):
+            return row['Count']
+
+def get_losses(actual_points, visible_points):
+    for index, row in df.iterrows():
+        if(row['player_actual_points'] == actual_points and row["visible_dealer_points"] == visible_points and row["game_result"] == "L"):
+            returnrow['Count']
+
+
+
+
+
 print("\nWELCOME TO BLACKJACK!\n")
+
+print(get_wins(4,2))
+
 decks = input("Enter number of decks to use: ")
 
 # user chooses number of decks of cards to use
@@ -58,6 +77,11 @@ def deal(deck):
         if card == 14: card = "A"
         hand.append(card)
     return hand
+
+def table_lookup(hand, dealer_hand):
+    print(total(dealer_hand))
+    new_hand = hand[1:]
+    print(total(new_hand))
 
 
 def play_again():
@@ -188,6 +212,7 @@ def game():
     print("The dealer is showing a " + str(dealer_hand[0]))
     print("You have a " + str(player_hand) + " for a total of " + str(total(player_hand)))
     print("You have " + str(tokens) + " tokens")
+    table_lookup(player_hand, dealer_hand)
     bet = place_bet()
     blackjack(dealer_hand, player_hand)
     quit = False
@@ -219,7 +244,7 @@ def game():
             exit()
         else:
             choice = input("Do you want to [H]it, [S]tand, or [Q]uit: ").lower()
-'''
+
 
 if __name__ == "__main__":
-   '''game()'''
+   game()
