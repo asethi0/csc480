@@ -219,10 +219,10 @@ def game():
     print("-" * 30 + "\n")
     dealer_hand = deal(deck)
     player_hand = deal(deck)
+    bet = place_bet()
     print("The dealer is showing a " + str(dealer_hand[0]))
     print("You have a " + str(player_hand) + " for a total of " + str(total(player_hand)))
     print("You have " + str(tokens) + " tokens")
-    bet = place_bet()
     blackjack(dealer_hand, player_hand)
     quit = False
     while not quit:
