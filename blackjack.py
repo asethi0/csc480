@@ -1,6 +1,9 @@
 import os
 import random
 import pandas as pd
+import time
+import subprocess
+import threading
 
 '''
 #only uncomment if running for first time on machine
@@ -21,7 +24,6 @@ df = df.groupby(["player_actual_points","visible_dealer_points","player_action",
 df.to_csv("last_table.csv", header = 'False')
 '''
 df = pd.read_csv("last_table.csv")
-
 
 def get_hit_wins(actual_points, visible_points):
     for index, row in df.iterrows():
@@ -44,9 +46,47 @@ def get_stay_losses(actual_points, visible_points):
         if row['player_actual_points'] == actual_points and row["visible_dealer_points"] == visible_points and row["game_result"] == "L" and row["player_action"] == "S":
             return row['Unnamed: 0']
 
-print("\nWELCOME TO BLACKJACK!\n")
+def send(msg):
+    f = open("pipe.txt", "w")
+    f.write(msg)
+    f.close()           
 
-decks = input("Enter number of decks to use: ")
+last_turn = 0
+
+def clearpy():
+    f = open("pypipe.txt", "w")
+    f.write("")
+    f.close()
+
+def read():
+    global last_turn
+    s = ''
+    while len(s) == 0:
+        f = open("pypipe.txt", "r")
+        s = f.readline()
+        f.close()
+    clearpy()
+    if s == 'q':
+        clearpy()
+        exit()
+    return s[1:]
+
+def thread_function():
+    subprocess.run(["javac", "*.java"])
+    subprocess.run(["java", "Controller"])
+
+x = threading.Thread(target=thread_function, args=())
+x.start()
+
+time.sleep(3)
+send("WELCOME TO BLACKJACK\n")
+print("\nWELCOME TO BLACKJACK!\n")
+time.sleep(.3)
+
+send("Enter number of decks to use\n")
+decks = read()
+while not decks.isdigit():
+    decks = read()
 
 # user chooses number of decks of cards to use
 deck = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14] * (int(decks) * 4)
@@ -68,7 +108,10 @@ def str_1(hand, opp_hand):
 
 
 def place_bet():
-    bet = input("\nHow much would you like to bet: ")
+    send("How much would you like to bet?")
+    bet = read()
+    while not bet.isdigit():
+        bet = read()
     bet = int(bet)
     return bet
 
@@ -88,13 +131,20 @@ def deal(deck):
     return hand
 
 def play_again():
-    again = input("Do you want to play again? (Y/N) : ").lower()
+    send("Do you want to play again? (Y/N)")
+    again = read().lower()
     if again == "y":
         dealer_hand = []
         player_hand = []
         deck = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14] * 4
         game()
     else:
+        send("Bye!")
+        time.sleep(.3)
+        send("q")
+        time.sleep(.3)
+        send("")
+        clearpy()
         print("Bye!")
         exit()
 
@@ -136,6 +186,9 @@ def print_results(dealer_hand, player_hand):
     print("-" * 30 + "\n")
     print("    \033[1;32;40mWINS:  \033[1;37;40m%s   \033[1;31;40mLOSSES:  \033[1;37;40m%s\n" % (wins, losses))
     print("-" * 30 + "\n")
+    send("The dealer has a " + str(dealer_hand) + " for a total of " + str(total(dealer_hand)))
+    time.sleep(.3)
+    send("You have a " + str(player_hand) + " for a total of " + str(total(player_hand)))
     print("The dealer has a " + str(dealer_hand) + " for a total of " + str(total(dealer_hand)))
     print("You have a " + str(player_hand) + " for a total of " + str(total(player_hand)))
 
@@ -149,6 +202,7 @@ def blackjack(dealer_hand, player_hand):
 
     if total(player_hand) == 21:
         print_results(dealer_hand, player_hand)
+        send("Congratulations! You got a Blackjack!")
         print("Congratulations! You got a Blackjack!\n")
         wins += 1
         tokens+=bet
@@ -156,6 +210,7 @@ def blackjack(dealer_hand, player_hand):
         play_again()
     elif total(dealer_hand) == 21:
         print_results(dealer_hand, player_hand)
+        send("Sorry, you lose. The dealer got a blackjack.")
         print("Sorry, you lose. The dealer got a blackjack.\n")
         losses += 1
         tokens-=bet
@@ -171,42 +226,47 @@ def score(dealer_hand, player_hand):
     global bet
     if total(player_hand) == 21:
         print_results(dealer_hand, player_hand)
+        send("Congratulations! You got a Blackjack!")
         print("Congratulations! You got a Blackjack!\n")
         tokens += bet
         bet = 0
         wins += 1
     elif total(dealer_hand) == 21:
         print_results(dealer_hand, player_hand)
+        send("Sorry, you lose. The dealer got a blackjack.")
         print("Sorry, you lose. The dealer got a blackjack.\n")
         tokens -= bet
         bet = 0
         losses += 1
     elif total(player_hand) > 21:
         print_results(dealer_hand, player_hand)
+        send("Sorry. You busted. You lose.")
         print("Sorry. You busted. You lose.\n")
         tokens -= bet
         bet = 0
         losses += 1
     elif total(dealer_hand) > 21:
         print_results(dealer_hand, player_hand)
+        send("Dealer busts. You win!")
         print("Dealer busts. You win!\n")
         tokens += bet
         bet = 0
         wins += 1
     elif total(player_hand) < total(dealer_hand):
         print_results(dealer_hand, player_hand)
+        send("Sorry. Your score isn't higher than the dealer. You lose.")
         print("Sorry. Your score isn't higher than the dealer. You lose.\n")
         tokens -= bet
         bet = 0
         losses += 1
     elif total(player_hand) > total(dealer_hand):
         print_results(dealer_hand, player_hand)
-        print("Congratulations. Your score is higher than the dealer. You win\n")
+        send("Congratulations. Your score is higher than the dealer. You win!")
+        print("Congratulations. Your score is higher than the dealer. You win!\n")
         tokens += bet
         wins += 1
         bet = 0
-
-
+        
 def game():
     global wins
     global losses
@@ -214,45 +274,72 @@ def game():
     global bet
 
     clear()
+    send(str(wins)+";"+str(losses))
+    time.sleep(.3)
     print("-" * 30 + "\n")
     print("    \033[1;32;40mWINS:  \033[1;37;40m%s   \033[1;31;40mLOSSES:  \033[1;37;40m%s\n" % (wins, losses))
     print("-" * 30 + "\n")
     dealer_hand = deal(deck)
     player_hand = deal(deck)
+    send("You have " + str(tokens) + " tokens" + "\n")
+    time.sleep(.3)
+    print("You have " + str(tokens) + " tokens")
     bet = place_bet()
+    send("dealer:The dealer is showing a " + str(dealer_hand[0]) + "\n")
+    time.sleep(.3)
+    send("you:You have a " + str(player_hand) + " for a total of " + str(total(player_hand)) + "\n")
+    time.sleep(.3)
     print("The dealer is showing a " + str(dealer_hand[0]))
     print("You have a " + str(player_hand) + " for a total of " + str(total(player_hand)))
-    print("You have " + str(tokens) + " tokens")
     blackjack(dealer_hand, player_hand)
     quit = False
     while not quit:
-        choice = input("Do you want to [H]it, [S]tand, or [Q]uit: ").lower()
+        send("Do you want to [H]it, [S]tand, or [Q]uit?")
+        choice = read().lower()
         if choice == 'h':
             hit(player_hand)
+            send("you:" + str(player_hand))
+            time.sleep(.3)
+            send("Hand total: " + str(total(player_hand)))
+            time.sleep(.3)
             print(player_hand)
             print("Hand total: " + str(total(player_hand)))
             if total(player_hand) > 21:
+                send("You busted")
                 print('You busted')
                 tokens -= bet
                 losses += 1
+                time.sleep(.3)
                 play_again()
         elif choice == 's':
             while str_1(dealer_hand, player_hand[:1]):
                 hit(dealer_hand)
+                send("dealer:" + str(dealer_hand))
+                time.sleep(.3)
                 print(dealer_hand)
                 if total(dealer_hand) > 21:
+                    send("Dealer busts, you win!")
                     print('Dealer busts, you win!')
                     wins += 1
                     tokens+=bet
+                    time.sleep(.3)
                     play_again()
             score(dealer_hand, player_hand)
+            time.sleep(.3)
             play_again()
         elif choice == "q":
+            send("Bye!")
+            time.sleep(.3)
+            send("q")
+            time.sleep(.3)
+            send("")
+            clearpy()
             print("Bye!")
             quit = True
             exit()
         else:
-            choice = input("Do you want to [H]it, [S]tand, or [Q]uit: ").lower()
+            send("Do you want to [H]it, [S]tand, or [Q]uit?")
+            choice = read().lower()
 
 
 if __name__ == "__main__":
