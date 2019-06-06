@@ -101,6 +101,8 @@ def str_1(hand, opp_hand):
     try:
         hit_ratio = get_hit_wins(total(hand), total(opp_hand)) / get_hit_losses(total(hand), total(opp_hand))
         stay_ratio = get_stay_wins(total(hand), total(opp_hand)) / get_hit_losses(total(hand), total(opp_hand))
+        if(total(hand)) < 17:
+            return True
         if hit_ratio > stay_ratio:
             return True
     except:
