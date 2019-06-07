@@ -67,7 +67,12 @@ public class Reader implements Runnable {
 						b.updateItem(d);
 						String lng;
 						if(d.length()>20){
-							lng = d.substring(23);
+							if(d.contains("The dealer has a")){
+								lng = d.substring(17);
+							}
+							else{
+								lng = d.substring(23);
+							}
 						}
 						else{
 							lng = d;
@@ -76,6 +81,9 @@ public class Reader implements Runnable {
 						for(int i = 0; i<lng.length();i++){
 							if(lng.charAt(i)!='['&&lng.charAt(i)!=']'&&lng.charAt(i)!=','&&lng.charAt(i)!=' '&&lng.charAt(i)!='\''&&lng.charAt(i)!='0'){
 								h.add(lng.charAt(i));
+							}
+							if(lng.charAt(i)==']'){
+								break;
 							}
 						}
 						b.updateDealHand(h);
